@@ -1,0 +1,34 @@
+
+
+services:
+  grpc-go-server:
+    build: ./go-server
+    container_name: grpc-go-server
+    ports:
+      - "50051:50051"
+    networks:
+      - grpc-network
+
+  grpc-node-client:
+    build: ./node-client
+    container_name: grpc-node-client
+    environment:
+      - GRPC_SERVER=grpc-go-server:50051
+    depends_on:
+      - grpc-go-server
+    networks:
+      - grpc-network
+
+  grpc-python-client:
+    build: ./python-client
+    container_name: grpc-python-client
+    environment:
+      - GRPC_SERVER=grpc-go-server:50051
+    depends_on:
+      - grpc-go-server
+    networks:
+      - grpc-network
+
+networks:
+  grpc-network:
+    driver: bridge
